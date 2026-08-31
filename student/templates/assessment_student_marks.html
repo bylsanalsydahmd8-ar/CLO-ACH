@@ -1,0 +1,655 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Student Marks - {{ assessment.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1>
+
+                <i class="bi bi-bar-chart me-2"></i>
+
+                Student Marks
+
+            </h1>
+
+            <p class="text-muted mb-0">
+
+                {{ course.course_code }}
+
+                -
+
+                {{ course.course_name }}
+
+            </p>
+
+            <p class="text-muted mb-0">
+
+                Assessment:
+
+                <strong>
+                    {{ assessment.name }}
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <!-- UPLOAD MARKS -->
+
+            <a
+                href="{{ url_for(
+                    'import_student_marks_excel',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                class="btn btn-success"
+            >
+
+                <i class="bi bi-upload me-1"></i>
+
+                Upload Marks
+
+            </a>
+
+
+            <!-- VIEW ASSESSMENT -->
+
+            <a
+                href="{{ url_for(
+                    'view_assessment',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                class="btn btn-secondary"
+            >
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="alert alert-info mb-4">
+
+        <i class="bi bi-info-circle me-2"></i>
+
+        You can edit any student's mark directly in the table.
+
+        The mark must be between
+
+        <strong>0</strong>
+
+        and the question maximum mark.
+
+    </div>
+
+
+    <!-- =====================================================
+         STUDENT RESULTS CARD
+    ====================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div
+                class="d-flex justify-content-between align-items-center"
+            >
+
+                <h5 class="mb-0">
+
+                    <i class="bi bi-people me-2"></i>
+
+                    Student Results
+
+                </h5>
+
+
+                <span class="badge bg-primary">
+
+                    {{ student_marks|length }}
+
+                    Students
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+
+            {% if student_marks and questions %}
+
+
+                <!-- =================================================
+                     TABLE
+                ================================================== -->
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-bordered table-hover align-middle text-center mb-0"
+                    >
+
+
+                        <!-- =================================================
+                             HEADER
+                        ================================================== -->
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th
+                                    style="min-width: 60px;"
+                                >
+                                    #
+                                </th>
+
+
+                                <th
+                                    style="min-width: 130px;"
+                                >
+                                    University ID
+                                </th>
+
+
+                                <th
+                                    style="min-width: 220px;"
+                                >
+                                    Student Name
+                                </th>
+
+
+                                {% for question in questions %}
+
+                                    <th
+                                        style="min-width: 150px;"
+                                    >
+
+                                        Q{{ loop.index }}
+
+                                        <br>
+
+                                        <small>
+
+                                            / {{ question.max_mark }}
+
+                                        </small>
+
+                                    </th>
+
+                                {% endfor %}
+
+
+                                <th
+                                    style="min-width: 130px;"
+                                >
+                                    Total
+                                </th>
+
+
+                                <th
+                                    style="min-width: 100px;"
+                                >
+                                    %
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <!-- =================================================
+                             BODY
+                        ================================================== -->
+
+                        <tbody>
+
+
+                            {% for item in student_marks %}
+
+                                <tr>
+
+
+                                    <!-- =================================================
+                                         NUMBER
+                                    ================================================== -->
+
+                                    <td>
+
+                                        {{ loop.index }}
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         UNIVERSITY ID
+                                    ================================================== -->
+
+                                    <td>
+
+                                        <strong>
+
+                                            {{ item.enrollment.student.student_number }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         STUDENT NAME
+                                    ================================================== -->
+
+                                    <td
+                                        class="text-start"
+                                    >
+
+                                        <strong>
+
+                                            {{ item.enrollment.student.fname }}
+
+                                            {{ item.enrollment.student.lname }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         QUESTION MARKS
+                                    ================================================== -->
+
+                                    {% for question in questions %}
+
+                                        <td>
+
+                                            {% set mark = item.marks[question.id] %}
+
+
+                                            <!-- =================================================
+                                                 EDIT MARK FORM
+                                            ================================================== -->
+
+                                            <form
+                                                method="POST"
+
+                                                action="{{ url_for(
+                                                    'update_student_question_mark',
+                                                    course_id=course.id,
+                                                    assessment_id=assessment.id,
+                                                    student_id=item.enrollment.student.id,
+                                                    question_id=question.id
+                                                ) }}"
+
+                                                class="d-flex justify-content-center align-items-center gap-1"
+                                            >
+
+
+                                                <!-- CSRF -->
+
+                                                <input
+                                                    type="hidden"
+                                                    name="csrf_token"
+                                                    value="{{ csrf_token() }}"
+                                                >
+
+
+                                                <!-- MARK INPUT -->
+
+                                                <input
+                                                    type="number"
+                                                    name="mark"
+
+                                                    value="{% if mark is not none %}{{ mark }}{% endif %}"
+
+                                                    min="0"
+
+                                                    max="{{ question.max_mark }}"
+
+                                                    step="0.01"
+
+                                                    class="form-control form-control-sm text-center"
+
+                                                    style="width: 85px;"
+
+                                                    placeholder="-"
+
+                                                    title="Maximum mark: {{ question.max_mark }}"
+                                                >
+
+
+                                                <!-- SAVE -->
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-success"
+
+                                                    title="Save Mark"
+                                                >
+
+                                                    <i class="bi bi-check-lg"></i>
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <!-- MAX MARK -->
+
+                                            <small class="text-muted d-block mt-1">
+
+                                                Max:
+                                                {{ question.max_mark }}
+
+                                            </small>
+
+                                        </td>
+
+                                    {% endfor %}
+
+
+                                    <!-- =================================================
+                                         TOTAL
+                                    ================================================== -->
+
+                                    <td>
+
+                                        <strong>
+
+                                            {{ "%.2f"|format(item.total) }}
+
+                                        </strong>
+
+                                        /
+
+                                        {{ assessment.max_mark }}
+
+                                    </td>
+
+
+                                    <!-- =================================================
+                                         PERCENTAGE
+                                    ================================================== -->
+
+                                    <td>
+
+
+                                        {% if item.percentage >= 70 %}
+
+                                            <span
+                                                class="badge bg-success"
+                                            >
+
+                                                {{ "%.2f"|format(
+                                                    item.percentage
+                                                ) }}%
+
+                                            </span>
+
+
+                                        {% elif item.percentage >= 50 %}
+
+                                            <span
+                                                class="badge bg-warning text-dark"
+                                            >
+
+                                                {{ "%.2f"|format(
+                                                    item.percentage
+                                                ) }}%
+
+                                            </span>
+
+
+                                        {% else %}
+
+                                            <span
+                                                class="badge bg-danger"
+                                            >
+
+                                                {{ "%.2f"|format(
+                                                    item.percentage
+                                                ) }}%
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+
+                        <!-- =================================================
+                             FOOTER
+                        ================================================== -->
+
+                        <tfoot class="table-light">
+
+                            <tr>
+
+                                <th
+                                    colspan="3"
+                                    class="text-end"
+                                >
+
+                                    Number of Students
+
+                                </th>
+
+
+                                <th
+                                    colspan="{{ questions|length }}"
+                                    class="text-start"
+                                >
+
+                                    <span class="badge bg-primary">
+
+                                        {{ student_marks|length }}
+
+                                    </span>
+
+                                </th>
+
+
+                                <th
+                                    colspan="2"
+                                ></th>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     NO MARKS
+                ================================================== -->
+
+                <div class="text-center py-5">
+
+                    <i
+                        class="bi bi-bar-chart text-muted"
+                        style="font-size: 55px;"
+                    ></i>
+
+
+                    <h5 class="mt-3">
+
+                        No Student Marks
+
+                    </h5>
+
+
+                    <p class="text-muted">
+
+                        No marks have been uploaded
+                        for this assessment yet.
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for(
+                            'import_student_marks_excel',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-upload me-1"></i>
+
+                        Upload Student Marks
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOTTOM ACTIONS
+    ====================================================== -->
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-body">
+
+            <div
+                class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+            >
+
+
+                <div>
+
+                    <strong>
+
+                        {{ assessment.name }}
+
+                    </strong>
+
+                    <span class="text-muted ms-2">
+
+                        Maximum:
+                        {{ assessment.max_mark }}
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="d-flex gap-2 flex-wrap"
+                >
+
+                    <!-- UPLOAD -->
+
+                    <a
+                        href="{{ url_for(
+                            'import_student_marks_excel',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-file-earmark-excel me-1"></i>
+
+                        Upload Marks
+
+                    </a>
+
+
+                    <!-- QUESTION CLO -->
+
+                    <a
+                        href="{{ url_for(
+                            'question_clo_matrix',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-outline-primary"
+                    >
+
+                        <i class="bi bi-grid-3x3 me-1"></i>
+
+                        Question-CLO Matrix
+
+                    </a>
+
+
+                    <!-- ASSESSMENT -->
+
+                    <a
+                        href="{{ url_for(
+                            'view_assessment',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-outline-secondary"
+                    >
+
+                        <i class="bi bi-arrow-left me-1"></i>
+
+                        Back to Assessment
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

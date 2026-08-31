@@ -1,0 +1,1108 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{ course.course_code }} - {{ course.course_name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+```
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h1 class="mb-1">
+            {{ course.course_code }}
+        </h1>
+
+        <p class="text-muted mb-0">
+            {{ course.course_name }}
+        </p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+
+        <!-- EDIT COURSE -->
+        <a
+            href="{{ url_for(
+                'edit_course',
+                course_id=course.id
+            ) }}"
+            class="btn btn-warning"
+        >
+            <i class="bi bi-pencil me-1"></i>
+            Edit Course
+        </a>
+
+        <!-- DELETE COURSE -->
+        <form
+            action="{{ url_for(
+                'delete_course',
+                course_id=course.id
+            ) }}"
+            method="POST"
+            class="d-inline"
+            onsubmit="return confirm(
+                'Are you sure you want to delete this course? This action cannot be undone.'
+            );"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                <i class="bi bi-trash me-1"></i>
+                Delete Course
+            </button>
+
+        </form>
+
+        <!-- BACK -->
+        <a
+            href="{{ url_for('courses') }}"
+            class="btn btn-secondary"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     COURSE DASHBOARD SHORTCUT
+====================================================== -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-8">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-3">
+
+                        <div
+                            class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                            style="width: 55px; height: 55px;"
+                        >
+                            <i
+                                class="bi bi-speedometer2 text-white"
+                                style="font-size: 25px;"
+                            ></i>
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="mb-1">
+                            Course Performance Dashboard
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            View CLO Achievement at course level,
+                            assessment level, and student level.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+
+                <a
+                    href="{{ url_for(
+                        'course_dashboard',
+                        course_id=course.id
+                    ) }}"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-bar-chart-fill me-1"></i>
+                    Open Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     COURSE INFORMATION
+====================================================== -->
+
+<div class="row">
+
+    <!-- COURSE DETAILS -->
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-book me-2"></i>
+                    Course Information
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <!-- COURSE CODE -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <strong>
+                            Course Code
+                        </strong>
+
+                        <p class="text-muted mb-0">
+                            {{ course.course_code }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- COURSE NAME -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <strong>
+                            Course Name
+                        </strong>
+
+                        <p class="text-muted mb-0">
+                            {{ course.course_name }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- ACADEMIC YEAR -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <strong>
+                            Academic Year
+                        </strong>
+
+                        <p class="text-muted mb-0">
+
+                            {% if course.academic_term %}
+
+                                {{ course.academic_term.academic_year }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not specified
+                                </span>
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- SEMESTER -->
+
+                    <div class="col-md-6 mb-4">
+
+                        <strong>
+                            Semester
+                        </strong>
+
+                        <p class="text-muted mb-0">
+
+                            {% if course.academic_term %}
+
+                                {{ course.academic_term.semester }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Not specified
+                                </span>
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="col-12">
+
+                        <strong>
+                            Description
+                        </strong>
+
+                        <p class="text-muted mb-0">
+                            {{ course.description or
+                               "No description available." }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COURSE OVERVIEW -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart me-2"></i>
+                    Course Overview
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <!-- CLO COUNT -->
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-4"
+                >
+
+                    <span>
+                        <i
+                            class="bi bi-bullseye text-primary me-2"
+                        ></i>
+                        CLOs
+                    </span>
+
+                    <span class="badge bg-primary rounded-pill">
+                        {{ course.clos|length }}
+                    </span>
+
+                </div>
+
+
+                <!-- ASSESSMENT COUNT -->
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-4"
+                >
+
+                    <span>
+                        <i
+                            class="bi bi-clipboard-check text-success me-2"
+                        ></i>
+                        Assessments
+                    </span>
+
+                    <span class="badge bg-success rounded-pill">
+                        {{ course.assessments|length }}
+                    </span>
+
+                </div>
+
+
+                <!-- STUDENT COUNT -->
+
+                <div
+                    class="d-flex justify-content-between align-items-center"
+                >
+
+                    <span>
+                        <i
+                            class="bi bi-people text-info me-2"
+                        ></i>
+                        Students
+                    </span>
+
+                    <span class="badge bg-info rounded-pill">
+                        {{ course.enrollments|length }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     COURSE MANAGEMENT
+====================================================== -->
+
+<div class="row mt-3">
+
+
+    <!-- =================================================
+         CLO MANAGEMENT
+    ================================================== -->
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i
+                    class="bi bi-bullseye text-primary"
+                    style="font-size: 42px;"
+                ></i>
+
+                <h5 class="mt-3">
+                    Course CLOs
+                </h5>
+
+                <p class="text-muted">
+                    Manage Course Learning Outcomes.
+                </p>
+
+                <div
+                    class="d-flex justify-content-center gap-2 flex-wrap"
+                >
+
+                    <!-- MANAGE CLO -->
+
+                    <a
+                        href="{{ url_for(
+                            'course_clos',
+                            course_id=course.id
+                        ) }}"
+                        class="btn btn-outline-primary"
+                    >
+                        <i class="bi bi-bullseye me-1"></i>
+                        Manage CLOs
+                    </a>
+
+
+                    <!-- ADD CLO -->
+
+                    {% if course.clos|length < 6 %}
+
+                        <a
+                            href="{{ url_for(
+                                'create_clo',
+                                course_id=course.id
+                            ) }}"
+                            class="btn btn-primary"
+                        >
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add CLO
+                        </a>
+
+                    {% else %}
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            disabled
+                        >
+                            Maximum 6 CLOs
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ASSESSMENT MANAGEMENT
+    ================================================== -->
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i
+                    class="bi bi-clipboard-check text-success"
+                    style="font-size: 42px;"
+                ></i>
+
+                <h5 class="mt-3">
+                    Assessments
+                </h5>
+
+                <p class="text-muted">
+                    Create, edit and manage assessments,
+                    questions and CLO mappings.
+                </p>
+
+                <div
+                    class="d-flex justify-content-center gap-2 flex-wrap"
+                >
+
+                    <!-- MANAGE ASSESSMENTS ONLY -->
+
+                    <a
+                        href="{{ url_for(
+                            'course_assessments',
+                            course_id=course.id
+                        ) }}"
+                        class="btn btn-outline-success"
+                    >
+                        <i class="bi bi-clipboard-check me-1"></i>
+                        Manage Assessments
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STUDENTS
+    ================================================== -->
+
+    <div class="col-md-4 mb-3">
+
+        <div class="card shadow-sm h-100">
+
+            <div class="card-body text-center">
+
+                <i
+                    class="bi bi-people text-info"
+                    style="font-size: 42px;"
+                ></i>
+
+                <h5 class="mt-3">
+                    Students
+                </h5>
+
+                <p class="text-muted">
+                    Manage students, enrollments
+                    and assessment results.
+                </p>
+
+
+                <!-- STUDENT COUNT -->
+
+                <div class="mb-3">
+
+                    <span class="badge bg-info fs-6">
+                        {{ course.enrollments|length }}
+                        Students
+                    </span>
+
+                </div>
+
+
+                <!-- STUDENT ACTIONS -->
+
+                <div
+                    class="d-flex justify-content-center gap-2 flex-wrap"
+                >
+
+                    <!-- MANAGE STUDENTS ONLY -->
+
+                    <a
+                        href="{{ url_for(
+                            'course_students',
+                            course_id=course.id
+                        ) }}"
+                        class="btn btn-outline-info"
+                    >
+                        <i class="bi bi-people me-1"></i>
+                        Manage Students
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CLO ACHIEVEMENT SECTION
+====================================================== -->
+
+<div class="card shadow-sm mt-3 mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-graph-up-arrow me-2"></i>
+
+            CLO Achievement
+
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="row">
+
+
+            <!-- COURSE CLO -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="d-flex align-items-center mb-2">
+
+                        <i
+                            class="bi bi-bullseye text-primary me-2"
+                        ></i>
+
+                        <strong>
+                            Course CLOs
+                        </strong>
+
+                    </div>
+
+                    <p class="text-muted small mb-0">
+                        View achievement percentage
+                        for every CLO at course level.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSESSMENT CLO -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="d-flex align-items-center mb-2">
+
+                        <i
+                            class="bi bi-clipboard-data text-success me-2"
+                        ></i>
+
+                        <strong>
+                            Assessment CLO Achievement
+                        </strong>
+
+                    </div>
+
+                    <p class="text-muted small mb-0">
+                        See how each CLO performs
+                        in every assessment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT CLO -->
+
+            <div class="col-md-4 mb-3">
+
+                <div class="border rounded p-3 h-100">
+
+                    <div class="d-flex align-items-center mb-2">
+
+                        <i
+                            class="bi bi-person-check text-info me-2"
+                        ></i>
+
+                        <strong>
+                            Student CLO Achievement
+                        </strong>
+
+                    </div>
+
+                    <p class="text-muted small mb-0">
+                        See each student's CLO achievement
+                        and PASS / FAIL status.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- KEEP ONLY OPEN CLO DASHBOARD -->
+
+        <div class="text-center mt-2">
+
+            <a
+                href="{{ url_for(
+                    'course_dashboard',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-bar-chart-fill me-1"></i>
+                Open CLO Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ASSESSMENT SUMMARY
+====================================================== -->
+
+{% if course.assessments %}
+
+    <div class="card shadow-sm mt-3 mb-4">
+
+        <div
+            class="card-header d-flex justify-content-between align-items-center"
+        >
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-clipboard-data me-2"></i>
+
+                Assessments
+
+            </h5>
+
+            <a
+                href="{{ url_for(
+                    'course_assessments',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-sm btn-outline-success"
+            >
+                View All
+            </a>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Assessment</th>
+
+                            <th>Max Mark</th>
+
+                            <th>Weight</th>
+
+                            <th>Questions</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for assessment in course.assessments %}
+
+                            <tr>
+
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        {{ assessment.name }}
+                                    </strong>
+
+                                    {% if assessment.description %}
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            {{ assessment.description }}
+                                        </small>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ assessment.max_mark }}
+                                </td>
+
+
+                                <td>
+                                    {{ assessment.weight }}%
+                                </td>
+
+
+                                <td>
+
+                                    <span class="badge bg-secondary">
+                                        {{ assessment.questions|length }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <!-- VIEW -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'view_assessment',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-info"
+                                        title="View Assessment"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+
+                                    <!-- ASSESSMENT CLO ACHIEVEMENT -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'assessment_clo_achievement',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-success"
+                                        title="CLO Achievement"
+                                    >
+                                        <i class="bi bi-graph-up"></i>
+                                    </a>
+
+
+                                    <!-- STUDENT MARKS -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'assessment_student_marks',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-info"
+                                        title="Student Marks"
+                                    >
+                                        <i class="bi bi-people"></i>
+                                    </a>
+
+
+                                    <!-- EDIT -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'edit_assessment',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-warning"
+                                        title="Edit Assessment"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+
+                                    <!-- QUESTION CLO MATRIX -->
+
+                                    <a
+                                        href="{{ url_for(
+                                            'question_clo_matrix',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="Question CLO Matrix"
+                                    >
+                                        <i class="bi bi-grid-3x3"></i>
+                                    </a>
+
+
+                                    <!-- DELETE -->
+
+                                    <form
+                                        action="{{ url_for(
+                                            'delete_assessment',
+                                            course_id=course.id,
+                                            assessment_id=assessment.id
+                                        ) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to delete this assessment?'
+                                        );"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="{{ csrf_token() }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="Delete Assessment"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <!-- NO ASSESSMENTS -->
+
+    <div class="card shadow-sm mt-3 mb-4">
+
+        <div class="card-body text-center py-5">
+
+            <i
+                class="bi bi-clipboard-x text-muted"
+                style="font-size: 50px;"
+            ></i>
+
+            <h5 class="mt-3">
+                No Assessments Yet
+            </h5>
+
+            <p class="text-muted">
+                This course does not have any assessments yet.
+            </p>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     QUICK ACTIONS
+====================================================== -->
+
+<div class="card shadow-sm mt-3 mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            <i class="bi bi-lightning-charge me-2"></i>
+
+            Quick Actions
+
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="d-flex flex-wrap gap-2">
+
+
+            <!-- COURSE DASHBOARD -->
+
+            <a
+                href="{{ url_for(
+                    'course_dashboard',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-speedometer2 me-1"></i>
+                Course Dashboard
+            </a>
+
+
+            
+
+
+            <!-- VIEW CLOs -->
+
+            <a
+                href="{{ url_for(
+                    'course_clos',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-outline-primary"
+            >
+                <i class="bi bi-bullseye me-1"></i>
+                View CLOs
+            </a>
+
+
+            <!-- ADD CLO -->
+
+            {% if course.clos|length < 6 %}
+
+                <a
+                    href="{{ url_for(
+                        'create_clo',
+                        course_id=course.id
+                    ) }}"
+                    class="btn btn-outline-primary"
+                >
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add CLO
+                </a>
+
+            {% else %}
+
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    disabled
+                >
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    Maximum 6 CLOs
+                </button>
+
+            {% endif %}
+
+
+            <!-- MANAGE ASSESSMENTS -->
+
+            <a
+                href="{{ url_for(
+                    'course_assessments',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-outline-success"
+            >
+                <i class="bi bi-clipboard-check me-1"></i>
+                Manage Assessments
+            </a>
+
+
+            <!-- MANAGE STUDENTS -->
+
+            <a
+                href="{{ url_for(
+                    'course_students',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-outline-info"
+            >
+                <i class="bi bi-people me-1"></i>
+                Manage Students
+            </a>
+
+
+            <!-- EDIT COURSE -->
+
+            <a
+                href="{{ url_for(
+                    'edit_course',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-outline-warning"
+            >
+                <i class="bi bi-pencil me-1"></i>
+                Edit Course
+            </a>
+
+
+            <!-- BACK -->
+
+            <a
+                href="{{ url_for('courses') }}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Courses
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ course.course_code }} - Students
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1>
+                <i class="bi bi-people me-2"></i>
+                Course Students
+            </h1>
+
+            <p class="text-muted mb-0">
+                {{ course.course_code }}
+                -
+                {{ course.course_name }}
+            </p>
+
+            <p class="text-muted">
+                Registered Students:
+                <strong>
+                    {{ enrollments|length }}
+                </strong>
+            </p>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{{ url_for('add_student', course_id=course.id) }}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-person-plus me-1"></i>
+                Add Student
+            </a>
+
+            <a
+                href="{{ url_for(
+                    'import_students_excel',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-success"
+            >
+                <i class="bi bi-file-earmark-excel me-1"></i>
+                Import Excel
+            </a>
+
+            <a
+                href="{{ url_for(
+                    'view_course',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-secondary"
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- STUDENTS TABLE -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    <i class="bi bi-table me-2"></i>
+                    Registered Students
+                </h5>
+
+                <span class="badge bg-primary">
+                    {{ enrollments|length }}
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if enrollments %}
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th style="width: 80px;">
+                                #
+                            </th>
+
+                            <th>
+                                University ID
+                            </th>
+
+                            <th>
+                                Student Name
+                            </th>
+
+                            <th
+                                style="width: 220px;"
+                                class="text-center"
+                            >
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for enrollment in enrollments %}
+
+                        <tr>
+
+                            <td>
+                                {{ loop.index }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ enrollment.student.student_number }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                {{ enrollment.student.fname }}
+                                {{ enrollment.student.lname }}
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <div class="d-flex justify-content-center gap-2">
+
+                                    <a
+                                        href="{{ url_for(
+                                            'edit_student',
+                                            course_id=course.id,
+                                            student_id=enrollment.student.id
+                                        ) }}"
+                                        class="btn btn-sm btn-warning"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'remove_student_from_course',
+                                            course_id=course.id,
+                                            student_id=enrollment.student.id
+                                        ) }}"
+                                        class="d-inline"
+                                        onsubmit="return confirm(
+                                            'Are you sure you want to remove this student from the course?'
+                                        );"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="{{ csrf_token() }}"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-danger"
+                                        >
+                                            <i class="bi bi-trash"></i>
+                                            Remove
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5">
+
+                <i
+                    class="bi bi-people text-muted"
+                    style="font-size: 60px;"
+                ></i>
+
+                <h5 class="mt-3">
+                    No Students
+                </h5>
+
+                <p class="text-muted">
+                    There are no students registered in this course yet.
+                </p>
+
+                <div class="d-flex justify-content-center gap-2">
+
+                    <a
+                        href="{{ url_for(
+                            'add_student',
+                            course_id=course.id
+                        ) }}"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-person-plus me-1"></i>
+                        Add Student
+                    </a>
+
+                    <a
+                        href="{{ url_for(
+                            'import_students_excel',
+                            course_id=course.id
+                        ) }}"
+                        class="btn btn-success"
+                    >
+                        <i class="bi bi-upload me-1"></i>
+                        Import Excel
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

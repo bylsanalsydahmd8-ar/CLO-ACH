@@ -1,0 +1,732 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Upload Student Marks - {{ assessment.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="mb-1">
+
+                <i class="bi bi-file-earmark-excel me-2"></i>
+
+                Upload Student Marks
+
+            </h1>
+
+            <p class="text-muted mb-1">
+
+                Course:
+
+                <strong>
+                    {{ course.course_code }}
+                    -
+                    {{ course.course_name }}
+                </strong>
+
+            </p>
+
+            <p class="text-muted mb-0">
+
+                Assessment:
+
+                <strong>
+                    {{ assessment.name }}
+                </strong>
+
+                |
+
+                Maximum Mark:
+
+                <strong>
+                    {{ assessment.max_mark }}
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <!-- VIEW MARKS -->
+
+            <a
+                href="{{ url_for(
+                    'assessment_student_marks',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-bar-chart me-1"></i>
+
+                View Student Marks
+
+            </a>
+
+
+            <!-- BACK -->
+
+            <a
+                href="{{ url_for(
+                    'view_assessment',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                class="btn btn-secondary"
+            >
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="alert alert-info">
+
+        <i class="bi bi-info-circle me-2"></i>
+
+        Upload an Excel file containing the University ID
+        and marks for the questions in this assessment.
+
+        <strong>
+            After import, the marks will appear in the
+            Student Marks page.
+        </strong>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         EXCEL FORMAT
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+
+                Excel File Format
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <p class="mb-3">
+
+                The first row of the Excel file should contain:
+
+            </p>
+
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-bordered table-hover text-center align-middle"
+                >
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>
+                                University ID
+                            </th>
+
+                            <th>
+                                Student Name
+                            </th>
+
+
+                            {% for question in questions %}
+
+                                <th>
+
+                                    Q{{ loop.index }}
+
+                                    <br>
+
+                                    <small>
+                                        Max:
+                                        {{ question.max_mark }}
+                                    </small>
+
+                                </th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                20230001
+                            </td>
+
+                            <td>
+                                Ahmad Mohammad
+                            </td>
+
+
+                            {% for question in questions %}
+
+                                <td>
+                                    2
+                                </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                20230002
+                            </td>
+
+                            <td>
+                                Sara Ali
+                            </td>
+
+
+                            {% for question in questions %}
+
+                                <td>
+                                    1.5
+                                </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- ACCEPTED QUESTION HEADERS -->
+
+            <div class="alert alert-light border mt-3 mb-3">
+
+                <strong>
+                    Accepted question column names:
+                </strong>
+
+                <div class="mt-2">
+
+                    <span class="badge bg-primary me-1">
+                        Q1
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Q2
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Question 1
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Question_1
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Question 2
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        السؤال 1
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        السؤال 2
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Q. 1 /2.00
+                    </span>
+
+                    <span class="badge bg-primary me-1">
+                        Q1/2.00
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="alert alert-warning mb-0">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                The
+
+                <strong>
+                    University ID
+                </strong>
+
+                must belong to a student enrolled in this course.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         QUESTIONS
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-question-circle me-2"></i>
+
+                Assessment Questions
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if questions %}
+
+                <div class="table-responsive">
+
+                    <table
+                        class="table table-bordered table-hover align-middle"
+                    >
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Question
+                                </th>
+
+                                <th>
+                                    Question Text
+                                </th>
+
+                                <th>
+                                    Maximum Mark
+                                </th>
+
+                                <th>
+                                    CLOs
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for question in questions %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            Q{{ loop.index }}
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        Question {{ loop.index }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ question.question_text }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="badge bg-secondary">
+
+                                            {{ question.max_mark }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if question.clos %}
+
+                                            {% for clo in question.clos %}
+
+                                                <span
+                                                    class="badge bg-primary me-1 mb-1"
+                                                >
+
+                                                    {{ clo.clo_code }}
+
+                                                </span>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+
+                                                Not mapped
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning mb-0">
+
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+
+                    This assessment does not contain any questions.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         UPLOAD FORM
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-cloud-arrow-up me-2"></i>
+
+                Upload Excel File
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if questions %}
+
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+                    <!-- CSRF -->
+
+                    {{ form.hidden_tag() }}
+
+
+                    <!-- FILE -->
+
+                    <div class="mb-4">
+
+                        {{ form.file.label(
+                            class="form-label fw-bold"
+                        ) }}
+
+                        {{ form.file(
+                            class="form-control"
+                        ) }}
+
+                        {% if form.file.errors %}
+
+                            {% for error in form.file.errors %}
+
+                                <div class="text-danger small mt-1">
+
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+
+                                    {{ error }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- RULES -->
+
+                    <div class="alert alert-secondary">
+
+                        <h6 class="fw-bold">
+
+                            <i class="bi bi-shield-check me-2"></i>
+
+                            Import Rules
+
+                        </h6>
+
+
+                        <ul class="mb-0">
+
+                            <li>
+                                University ID must belong to a student
+                                enrolled in this course.
+                            </li>
+
+                            <li>
+                                Mark must be greater than or equal to 0.
+                            </li>
+
+                            <li>
+                                Mark cannot exceed the maximum mark
+                                of the question.
+                            </li>
+
+                            <li>
+                                Existing marks will be updated.
+                            </li>
+
+                            <li>
+                                Empty cells will not change existing marks.
+                            </li>
+
+                            <li>
+                                After successful upload, you will be
+                                redirected to the Student Marks page.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        {{ form.submit(
+                            class="btn btn-success"
+                        ) }}
+
+                        <a
+                            href="{{ url_for(
+                                'assessment_student_marks',
+                                course_id=course.id,
+                                assessment_id=assessment.id
+                            ) }}"
+                            class="btn btn-primary"
+                        >
+
+                            <i class="bi bi-bar-chart me-1"></i>
+
+                            View Current Marks
+
+                        </a>
+
+                        <a
+                            href="{{ url_for(
+                                'view_assessment',
+                                course_id=course.id,
+                                assessment_id=assessment.id
+                            ) }}"
+                            class="btn btn-secondary"
+                        >
+
+                            <i class="bi bi-x-circle me-1"></i>
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            {% else %}
+
+                <div class="text-center py-4">
+
+                    <i
+                        class="bi bi-question-circle text-muted"
+                        style="font-size:50px;"
+                    ></i>
+
+                    <h5 class="mt-3">
+                        No Questions
+                    </h5>
+
+                    <p class="text-muted">
+
+                        Add questions to this assessment
+                        before uploading student marks.
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for(
+                            'create_question',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Add Question
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         AFTER UPLOAD
+    ====================================================== -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <div class="d-flex align-items-center">
+
+                <div class="me-3">
+
+                    <i
+                        class="bi bi-database-check text-success"
+                        style="font-size:35px;"
+                    ></i>
+
+                </div>
+
+
+                <div>
+
+                    <h6 class="mb-1">
+
+                        Uploaded marks are stored in the database
+
+                    </h6>
+
+                    <p class="text-muted mb-2">
+
+                        After importing the Excel file, the system
+                        stores each student's mark for each question
+                        and displays it in the Student Marks table.
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for(
+                            'assessment_student_marks',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+
+                        <i class="bi bi-eye me-1"></i>
+
+                        Open Student Marks
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

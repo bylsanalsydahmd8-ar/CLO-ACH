@@ -1,0 +1,1290 @@
+```html
+{% extends "layout.html" %}
+
+{% block title %}
+    Home - CLOPLO
+{% endblock %}
+
+{% block content %}
+
+<div class="home-page">
+
+
+    <!-- =====================================================
+         TOPBAR
+    ===================================================== -->
+
+    <header class="topbar">
+
+        <button
+            class="menu-button"
+            id="menuButton"
+            type="button"
+            aria-label="Open menu"
+        >
+            ☰
+        </button>
+
+
+        <div class="topbar-title">
+
+            <h1>
+                Home
+            </h1>
+
+            <p>
+                Academic overview
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             TOPBAR ACTIONS
+             Notifications removed
+        ================================================== -->
+
+        <div class="topbar-actions">
+
+            <button
+                class="icon-button"
+                id="themeButton"
+                type="button"
+                title="Toggle theme"
+            >
+                ☼
+            </button>
+
+
+            <button
+                class="language-button"
+                type="button"
+            >
+                EN
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         HERO
+    ===================================================== -->
+
+    <section class="hero">
+
+        <div class="hero-copy">
+
+            <span class="eyebrow">
+                CLO ACADEMIC PLATFORM
+            </span>
+
+
+            <h2>
+
+                Manage learning.
+
+                <br>
+
+                <span>
+                    Measure outcomes.
+                </span>
+
+            </h2>
+
+
+            <p>
+
+                A simple academic workspace for
+                courses, assessments, questions,
+                CLOs, students, and performance
+                reports.
+
+            </p>
+
+        </div>
+
+
+        <div class="hero-art">
+
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/home_hero_illustration.png'
+                ) }}"
+                alt="Academic Management Illustration"
+            >
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         COURSES SECTION
+    ===================================================== -->
+
+    <section class="recent-courses-section">
+
+
+        <!-- =================================================
+             SECTION HEADER
+        ================================================== -->
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    COURSE MANAGEMENT
+                </span>
+
+
+                <h2>
+                    Your Courses
+                </h2>
+
+
+                <p>
+                    All courses available in the system.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('courses') }}"
+                class="home-view-all"
+            >
+
+                View All Courses
+
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================================
+             COURSES
+        ================================================== -->
+
+        {% if courses %}
+
+            <div class="home-courses-grid">
+
+
+                {% for course in courses|sort(attribute='id', reverse=true) %}
+
+
+                    <!-- =====================================
+                         COURSE CARD
+                    ====================================== -->
+
+                    <div class="home-course-card">
+
+
+                        <!-- =================================
+                             CARD TOP
+                        ================================== -->
+
+                        <div class="home-course-card-top">
+
+
+                            <div class="home-course-icon">
+
+                                <i class="bi bi-book"></i>
+
+                            </div>
+
+
+                            <span class="home-course-code">
+
+                                {{ course.course_code }}
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             CARD BODY
+                        ================================== -->
+
+                        <div class="home-course-card-body">
+
+
+                            <!-- COURSE NAME -->
+
+                            <h3>
+
+                                {{ course.course_name }}
+
+                            </h3>
+
+
+
+                            <!-- DESCRIPTION -->
+
+                            {% if course.description %}
+
+                                <p class="home-course-description">
+
+                                    {{ course.description }}
+
+                                </p>
+
+                            {% else %}
+
+                                <p class="home-course-description">
+
+                                    No description available.
+
+                                </p>
+
+                            {% endif %}
+
+
+
+                            <!-- =================================
+                                 COURSE INFORMATION
+                            ================================== -->
+
+                            <div class="home-course-details">
+
+
+                                <!-- ACADEMIC YEAR -->
+
+                                <div class="home-detail">
+
+                                    <div class="home-detail-icon">
+
+                                        <i class="bi bi-calendar3"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <small>
+                                            Academic Year
+                                        </small>
+
+
+                                        <strong>
+
+                                            {% if course.academic_term %}
+
+                                                {{ course.academic_term.academic_year }}
+
+                                            {% else %}
+
+                                                Not specified
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <!-- SEMESTER -->
+
+                                <div class="home-detail">
+
+                                    <div class="home-detail-icon">
+
+                                        <i class="bi bi-mortarboard"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <small>
+                                            Semester
+                                        </small>
+
+
+                                        <strong>
+
+                                            {% if course.academic_term %}
+
+                                                {{ course.academic_term.semester }}
+
+                                            {% else %}
+
+                                                Not specified
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <!-- INSTRUCTOR -->
+
+                                <div class="home-detail">
+
+                                    <div class="home-detail-icon">
+
+                                        <i class="bi bi-person"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <small>
+                                            Instructor
+                                        </small>
+
+
+                                        <strong>
+
+                                            {% if course.instructor %}
+
+                                                {{ course.instructor.fname }}
+                                                {{ course.instructor.lname }}
+
+                                            {% else %}
+
+                                                Not specified
+
+                                            {% endif %}
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- =================================
+                                 COURSE STATISTICS
+                            ================================== -->
+
+                            <div class="home-course-statistics">
+
+
+                                <!-- CLOs -->
+
+                                <div class="home-stat">
+
+                                    <i class="bi bi-bullseye"></i>
+
+                                    <strong>
+                                        {{ course.clos|length }}
+                                    </strong>
+
+                                    <small>
+                                        CLOs
+                                    </small>
+
+                                </div>
+
+
+
+                                <!-- ASSESSMENTS -->
+
+                                <div class="home-stat">
+
+                                    <i class="bi bi-clipboard-check"></i>
+
+                                    <strong>
+                                        {{ course.assessments|length }}
+                                    </strong>
+
+                                    <small>
+                                        Assessments
+                                    </small>
+
+                                </div>
+
+
+
+                                <!-- STUDENTS -->
+
+                                <div class="home-stat">
+
+                                    <i class="bi bi-people"></i>
+
+                                    <strong>
+                                        {{ course.enrollments|length }}
+                                    </strong>
+
+                                    <small>
+                                        Students
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================
+                             CARD FOOTER
+                        ================================== -->
+
+                        <div class="home-course-footer">
+
+
+                            <a
+                                href="{{ url_for(
+                                    'view_course',
+                                    course_id=course.id
+                                ) }}"
+                                class="home-course-button"
+                            >
+
+                                <span>
+
+                                    <i class="bi bi-eye me-1"></i>
+
+                                    View Course
+
+                                </span>
+
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </a>
+
+
+                        </div>
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+
+        {% else %}
+
+
+            <!-- =================================================
+                 NO COURSES
+            ================================================== -->
+
+            <div class="empty-courses">
+
+
+                <div class="empty-courses-icon">
+
+                    <i class="bi bi-book"></i>
+
+                </div>
+
+
+                <h3>
+                    No Courses Yet
+                </h3>
+
+
+                <p>
+                    No courses have been added to the system yet.
+                </p>
+
+
+                <a
+                    href="{{ url_for('create_course') }}"
+                    class="btn btn-primary"
+                >
+
+                    <i class="bi bi-plus-circle me-1"></i>
+
+                    Add Your First Course
+
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SYSTEM CONNECTION
+    ===================================================== -->
+
+    <section class="connection-card">
+
+
+        <div class="connection-text">
+
+
+            <span class="eyebrow">
+                THE CORE OF CLOPLO
+            </span>
+
+
+            <h2>
+
+                Course → Assessment → Question
+                → CLO → Student → Report
+
+            </h2>
+
+
+            <p>
+
+                Every part of the system is connected,
+                so results can move from raw question
+                marks to meaningful CLO achievement.
+
+            </p>
+
+
+        </div>
+
+
+
+        <div class="flow">
+
+
+            <div>
+
+                <i class="bi bi-book me-1"></i>
+
+                Course
+
+            </div>
+
+
+            <i>
+                →
+            </i>
+
+
+            <div>
+
+                <i class="bi bi-clipboard-check me-1"></i>
+
+                Assessment
+
+            </div>
+
+
+            <i>
+                →
+            </i>
+
+
+            <div>
+
+                <i class="bi bi-question-circle me-1"></i>
+
+                Question
+
+            </div>
+
+
+            <i>
+                →
+            </i>
+
+
+            <div>
+
+                <i class="bi bi-bullseye me-1"></i>
+
+                CLO
+
+            </div>
+
+
+            <i>
+                →
+            </i>
+
+
+            <div>
+
+                <i class="bi bi-people me-1"></i>
+
+                Student
+
+            </div>
+
+
+            <i>
+                →
+            </i>
+
+
+            <div>
+
+                <i class="bi bi-file-earmark-bar-graph me-1"></i>
+
+                Report
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     HOME COURSE CARDS CSS
+===================================================== -->
+
+<style>
+
+
+/* =====================================================
+   COURSES GRID
+===================================================== */
+
+.home-courses-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-top: 20px;
+
+}
+
+
+/* =====================================================
+   COURSE CARD
+===================================================== */
+
+.home-course-card {
+
+    display: flex;
+
+    flex-direction: column;
+
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.home-course-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.08);
+
+}
+
+
+/* =====================================================
+   CARD TOP
+===================================================== */
+
+.home-course-card-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 14px 16px;
+
+    background: #f8f9fa;
+
+    border-bottom: 1px solid #e9ecef;
+
+}
+
+
+/* =====================================================
+   BOOK ICON
+===================================================== */
+
+.home-course-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #f1f3f5;
+
+    color: #495057;
+
+    font-size: 19px;
+
+}
+
+
+/* =====================================================
+   COURSE CODE
+===================================================== */
+
+.home-course-code {
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    background: #f1f3f5;
+
+    color: #495057;
+
+    border: 1px solid #dee2e6;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+}
+
+
+/* =====================================================
+   CARD BODY
+===================================================== */
+
+.home-course-card-body {
+
+    padding: 17px;
+
+    flex: 1;
+
+}
+
+
+.home-course-card-body h3 {
+
+    margin: 0 0 7px;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    color: #212529;
+
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
+
+.home-course-description {
+
+    min-height: 38px;
+
+    margin: 0 0 15px;
+
+    color: #6c757d;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   COURSE DETAILS
+===================================================== */
+
+.home-course-details {
+
+    padding: 12px 0;
+
+    border-top: 1px solid #eeeeee;
+
+    border-bottom: 1px solid #eeeeee;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+}
+
+
+/* =====================================================
+   DETAIL ITEM
+===================================================== */
+
+.home-detail {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+/* =====================================================
+   DETAIL ICON
+===================================================== */
+
+.home-detail-icon {
+
+    width: 28px;
+
+    height: 28px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: #f1f3f5;
+
+    color: #6c757d;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   DETAIL TEXT
+===================================================== */
+
+.home-detail > div:last-child {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.home-detail small {
+
+    color: #9aa0a6;
+
+    font-size: 9px;
+
+    line-height: 1.2;
+
+}
+
+
+.home-detail strong {
+
+    color: #343a40;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* =====================================================
+   STATISTICS
+===================================================== */
+
+.home-course-statistics {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 6px;
+
+    margin-top: 13px;
+
+}
+
+
+.home-stat {
+
+    text-align: center;
+
+    padding: 7px 3px;
+
+    border-radius: 8px;
+
+    background: #f8f9fa;
+
+    border: 1px solid #eeeeee;
+
+}
+
+
+.home-stat i {
+
+    display: block;
+
+    color: #6c757d;
+
+    font-size: 14px;
+
+    margin-bottom: 2px;
+
+}
+
+
+.home-stat strong {
+
+    display: block;
+
+    color: #343a40;
+
+    font-size: 14px;
+
+}
+
+
+.home-stat small {
+
+    display: block;
+
+    color: #8b9299;
+
+    font-size: 9px;
+
+}
+
+
+/* =====================================================
+   CARD FOOTER
+===================================================== */
+
+.home-course-footer {
+
+    padding: 0 17px 17px;
+
+}
+
+
+/* =====================================================
+   VIEW COURSE BUTTON
+===================================================== */
+
+.home-course-button {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    width: 100%;
+
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    background: #f1f3f5;
+
+    border: 1px solid #dee2e6;
+
+    color: #495057;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition:
+        all 0.2s ease;
+
+}
+
+
+.home-course-button:hover {
+
+    background: #e9ecef;
+
+    border-color: #ced4da;
+
+    color: #212529;
+
+}
+
+
+.home-course-button > i {
+
+    color: #6c757d;
+
+    transition:
+        transform 0.2s ease;
+
+}
+
+
+.home-course-button:hover > i {
+
+    transform: translateX(3px);
+
+}
+
+
+/* =====================================================
+   VIEW ALL COURSES
+===================================================== */
+
+.home-view-all {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #495057;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.home-view-all:hover {
+
+    color: #212529;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .home-courses-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .home-courses-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-heading {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 12px;
+
+    }
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+[data-theme="dark"] .home-course-card {
+
+    background: #1f2937;
+
+    border-color: #374151;
+
+}
+
+
+[data-theme="dark"] .home-course-card-top {
+
+    background: #27303d;
+
+    border-color: #374151;
+
+}
+
+
+[data-theme="dark"] .home-course-card-body h3 {
+
+    color: #f8f9fa;
+
+}
+
+
+[data-theme="dark"] .home-course-description {
+
+    color: #adb5bd;
+
+}
+
+
+[data-theme="dark"] .home-course-details {
+
+    border-color: #374151;
+
+}
+
+
+[data-theme="dark"] .home-detail-icon {
+
+    background: #343b48;
+
+    color: #adb5bd;
+
+}
+
+
+[data-theme="dark"] .home-detail strong {
+
+    color: #e9ecef;
+
+}
+
+
+[data-theme="dark"] .home-course-code {
+
+    background: #343b48;
+
+    border-color: #495057;
+
+    color: #dee2e6;
+
+}
+
+
+[data-theme="dark"] .home-stat {
+
+    background: #27303d;
+
+    border-color: #374151;
+
+}
+
+
+[data-theme="dark"] .home-stat strong {
+
+    color: #f8f9fa;
+
+}
+
+
+[data-theme="dark"] .home-course-button {
+
+    background: #343b48;
+
+    border-color: #495057;
+
+    color: #e9ecef;
+
+}
+
+
+[data-theme="dark"] .home-course-button:hover {
+
+    background: #3d4654;
+
+    color: #ffffff;
+
+}
+
+
+[data-theme="dark"] .home-view-all {
+
+    color: #dee2e6;
+
+}
+
+
+[data-theme="dark"] .home-view-all:hover {
+
+    color: #ffffff;
+
+}
+
+</style>
+
+
+{% endblock %}
+

@@ -1,0 +1,651 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Edit Assessment - {{ assessment.name }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1>
+                <i class="bi bi-clipboard-check me-2"></i>
+                {{ assessment.name }}
+            </h1>
+
+            <p class="text-muted mb-0">
+
+                {{ course.course_code }}
+                -
+                {{ course.course_name }}
+
+            </p>
+
+        </div>
+
+
+        <div class="d-flex gap-2">
+
+            <!-- CLO MATRIX -->
+
+            <a
+                href="{{ url_for(
+                    'question_clo_matrix',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-grid-3x3 me-1"></i>
+
+                CLO Matrix
+
+            </a>
+
+
+            <!-- BACK -->
+
+            <a
+                href="{{ url_for(
+                    'assessments',
+                    course_id=course.id
+                ) }}"
+                class="btn btn-secondary"
+            >
+
+                <i class="bi bi-arrow-left me-1"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ASSESSMENT FORM
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-pencil-square me-2"></i>
+
+                Assessment Information
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {{ form.hidden_tag() }}
+
+
+                <div class="row">
+
+                    <!-- NAME -->
+
+                    <div class="col-md-6 mb-3">
+
+                        {{ form.name.label(class="form-label") }}
+
+                        {{ form.name(
+                            class="form-control"
+                        ) }}
+
+                        {% for error in form.name.errors %}
+
+                            <div class="text-danger small">
+
+                                {{ error }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- MAX MARK -->
+
+                    <div class="col-md-3 mb-3">
+
+                        {{ form.max_mark.label(class="form-label") }}
+
+                        {{ form.max_mark(
+                            class="form-control",
+                            type="number",
+                            step="0.01",
+                            min="0"
+                        ) }}
+
+                        {% for error in form.max_mark.errors %}
+
+                            <div class="text-danger small">
+
+                                {{ error }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- WEIGHT -->
+
+                    <div class="col-md-3 mb-3">
+
+                        {{ form.weight.label(class="form-label") }}
+
+                        <div class="input-group">
+
+                            {{ form.weight(
+                                class="form-control",
+                                type="number",
+                                step="0.01",
+                                min="0",
+                                max="100"
+                            ) }}
+
+                            <span class="input-group-text">
+                                %
+                            </span>
+
+                        </div>
+
+                        {% for error in form.weight.errors %}
+
+                            <div class="text-danger small">
+
+                                {{ error }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="col-12 mb-3">
+
+                        {{ form.description.label(class="form-label") }}
+
+                        {{ form.description(
+                            class="form-control",
+                            rows="3"
+                        ) }}
+
+                        {% for error in form.description.errors %}
+
+                            <div class="text-danger small">
+
+                                {{ error }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- SAVE -->
+
+                <button
+                    type="submit"
+                    class="btn btn-warning"
+                >
+
+                    <i class="bi bi-save me-1"></i>
+
+                    Save Changes
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         QUESTIONS
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+
+                    <i class="bi bi-question-circle me-2"></i>
+
+                    Questions
+
+                </h5>
+
+
+                <!-- ADD QUESTION -->
+
+                <a
+                    href="{{ url_for(
+                        'create_question',
+                        course_id=course.id,
+                        assessment_id=assessment.id
+                    ) }}"
+                    class="btn btn-success btn-sm"
+                >
+
+                    <i class="bi bi-plus-circle me-1"></i>
+
+                    Add Question
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if assessment.questions %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0 align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Question
+                                </th>
+
+                                <th>
+                                    Mark
+                                </th>
+
+                                <th>
+                                    CLOs
+                                </th>
+
+                                <th class="text-end">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for question in assessment.questions %}
+
+                                <tr>
+
+                                    <!-- NUMBER -->
+
+                                    <td>
+
+                                        {{ loop.index }}
+
+                                    </td>
+
+
+                                    <!-- QUESTION -->
+
+                                    <td>
+
+                                        {{ question.question_text }}
+
+                                    </td>
+
+
+                                    <!-- MARK -->
+
+                                    <td>
+
+                                        <span class="badge bg-primary">
+
+                                            {{ question.max_mark }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- CLOs -->
+
+                                    <td>
+
+                                        {% if question.clos %}
+
+                                            {% for clo in question.clos %}
+
+                                                <span class="badge bg-success me-1">
+
+                                                    {{ clo.clo_code }}
+
+                                                </span>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            <span class="text-muted">
+
+                                                Not mapped
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+
+                                    <td class="text-end">
+
+                                        <div class="d-flex justify-content-end gap-1">
+
+
+                                            <!-- EDIT QUESTION -->
+
+                                            <a
+                                                href="{{ url_for(
+                                                    'edit_question',
+                                                    course_id=course.id,
+                                                    assessment_id=assessment.id,
+                                                    question_id=question.id
+                                                ) }}"
+                                                class="btn btn-sm btn-warning"
+                                                title="Edit Question"
+                                            >
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <!-- DELETE QUESTION -->
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for(
+                                                    'delete_question',
+                                                    course_id=course.id,
+                                                    assessment_id=assessment.id,
+                                                    question_id=question.id
+                                                ) }}"
+                                                class="d-inline"
+                                                onsubmit="return confirm(
+                                                    'Are you sure you want to delete this question?'
+                                                );"
+                                            >
+
+                                                {{ form.hidden_tag() }}
+
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-danger"
+                                                    title="Delete Question"
+                                                >
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+                                            </form>
+
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+
+                        <!-- TOTAL -->
+
+                        <tfoot class="table-light">
+
+                            <tr>
+
+                                <th colspan="2" class="text-end">
+
+                                    Total Question Marks:
+
+                                </th>
+
+                                <th>
+
+                                    {{ total_question_marks }}
+
+                                    /
+
+                                    {{ assessment.max_mark }}
+
+                                </th>
+
+                                <th colspan="2">
+
+                                    {% if total_question_marks > assessment.max_mark %}
+
+                                        <span class="badge bg-danger">
+
+                                            Exceeds Assessment Mark
+
+                                        </span>
+
+                                    {% elif total_question_marks == assessment.max_mark %}
+
+                                        <span class="badge bg-success">
+
+                                            Complete
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            Remaining:
+
+                                            {{ assessment.max_mark - total_question_marks }}
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </th>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- NO QUESTIONS -->
+
+                <div class="text-center py-5">
+
+                    <i
+                        class="bi bi-question-circle text-muted"
+                        style="font-size: 60px;"
+                    ></i>
+
+
+                    <h5 class="mt-3">
+
+                        No Questions
+
+                    </h5>
+
+
+                    <p class="text-muted">
+
+                        You can create this assessment without questions.
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for(
+                            'create_question',
+                            course_id=course.id,
+                            assessment_id=assessment.id
+                        ) }}"
+                        class="btn btn-success"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Add First Question
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EXCEL IMPORT
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                <i class="bi bi-file-earmark-excel me-2"></i>
+
+                Import Questions from Excel
+
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <p class="text-muted">
+
+                Upload an Excel file containing the question name/text
+                and its mark.
+
+            </p>
+
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'import_questions_excel',
+                    course_id=course.id,
+                    assessment_id=assessment.id
+                ) }}"
+                enctype="multipart/form-data"
+            >
+
+                <!-- CSRF -->
+
+                {{ form.hidden_tag() }}
+
+
+                <div class="row align-items-end">
+
+                    <div class="col-md-8">
+
+                        <label class="form-label">
+
+                            Excel File
+
+                        </label>
+
+
+                        <input
+                            type="file"
+                            name="excel_file"
+                            class="form-control"
+                            accept=".xlsx,.xlsm"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+
+                            <i class="bi bi-upload me-1"></i>
+
+                            Upload Questions
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

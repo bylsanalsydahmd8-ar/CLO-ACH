@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit {{ clo.clo_code }} - CLOPLO
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <!-- HEADER -->
+
+            <div class="mb-4">
+
+                <h1>
+                    Edit {{ clo.clo_code }}
+                </h1>
+
+                <p class="text-muted">
+
+                    Edit CLO for
+
+                    <strong>
+                        {{ course.course_code }}
+                    </strong>
+
+                    -
+                    {{ course.course_name }}
+
+                </p>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <div class="card shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form
+                        method="POST"
+                        novalidate
+                    >
+
+                        {{ form.hidden_tag() }}
+
+
+                        <!-- CLO CODE -->
+
+                        <div class="mb-4">
+
+                            {{ form.clo_code.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.clo_code(
+                                class="form-control"
+                            ) }}
+
+                            {% for error in form.clo_code.errors %}
+
+                                <div class="text-danger mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="mb-4">
+
+                            {{ form.description.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.description(
+                                class="form-control",
+                                rows="5"
+                            ) }}
+
+                            {% for error in form.description.errors %}
+
+                                <div class="text-danger mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- CATEGORY -->
+
+                        <div class="mb-4">
+
+                            {{ form.category.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.category(
+                                class="form-select"
+                            ) }}
+
+                            {% for error in form.category.errors %}
+
+                                <div class="text-danger mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="d-flex justify-content-between">
+
+                            <a
+                                href="{{ url_for(
+                                    'course_clos',
+                                    course_id=course.id
+                                ) }}"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                <i class="bi bi-arrow-left"></i>
+
+                                Cancel
+
+                            </a>
+
+
+                            {{ form.submit(
+                                class="btn btn-primary",
+                                value="Update CLO"
+                            ) }}
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,947 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ course.course_code }} - CLO Achievement Report
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid py-4" id="reportContent">
+
+    <!-- =====================================================
+         REPORT HEADER
+    ====================================================== -->
+
+    <div class="text-center mb-4">
+
+        <h1 class="fw-bold">
+            CLO Achievement Report
+        </h1>
+
+        <h4 class="mt-2">
+            {{ course.course_code }} -
+            {{ course.course_name }}
+        </h4>
+
+        <p class="text-muted mb-0">
+            Comprehensive Course CLO Achievement Report
+        </p>
+
+        <p class="text-muted">
+            Pass Threshold:
+            <strong>{{ pass_percentage }}%</strong>
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACTION BUTTONS
+    ====================================================== -->
+
+    <div class="d-flex justify-content-end gap-2 mb-4 no-print">
+
+        <a
+            href="{{ url_for(
+                'course_dashboard',
+                course_id=course.id
+            ) }}"
+            class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Dashboard
+
+        </a>
+
+
+        <button
+            onclick="window.print()"
+            class="btn btn-primary">
+
+            <i class="bi bi-printer me-1"></i>
+            Print / Save PDF
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         COURSE SUMMARY
+    ====================================================== -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        CLOs
+                    </div>
+
+                    <h2 class="fw-bold">
+                        {{ clos|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        Assessments
+                    </div>
+
+                    <h2 class="fw-bold">
+                        {{ assessments|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        Students
+                    </div>
+
+                    <h2 class="fw-bold">
+                        {{ enrollments|length }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm h-100">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        Course Achievement
+                    </div>
+
+                    <h2 class="fw-bold">
+
+                        {% if course_average is not none %}
+                            {{ "%.2f"|format(course_average) }}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+
+                    </h2>
+
+                    {% if course_status == "PASS" %}
+
+                        <span class="badge bg-success">
+                            PASS
+                        </span>
+
+                    {% elif course_status == "FAIL" %}
+
+                        <span class="badge bg-danger">
+                            FAIL
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         1. COURSE CLO ACHIEVEMENT
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                <i class="bi bi-bullseye me-2"></i>
+                1. Course CLO Achievement
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>CLO</th>
+
+                            <th>Description</th>
+
+                            <th class="text-center">
+                                Achievement
+                            </th>
+
+                            <th class="text-center">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in course_clos %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ item.clo.clo_code }}
+                                </strong>
+                            </td>
+
+
+                            <td>
+
+                                {% if item.clo.clo_description %}
+                                    {{ item.clo.clo_description }}
+
+                                {% elif item.clo.description %}
+                                    {{ item.clo.description }}
+
+                                {% else %}
+                                    -
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-center">
+
+                                {% if item.percentage is not none %}
+
+                                    <strong>
+                                        {{ "%.2f"|format(
+                                            item.percentage
+                                        ) }}%
+                                    </strong>
+
+                                {% else %}
+
+                                    N/A
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td class="text-center">
+
+                                {% if item.status == "PASS" %}
+
+                                    <span class="badge bg-success">
+                                        PASS
+                                    </span>
+
+                                {% elif item.status == "FAIL" %}
+
+                                    <span class="badge bg-danger">
+                                        FAIL
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        N/A
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COURSE CLO CHART
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                <i class="bi bi-bar-chart-fill me-2"></i>
+                Course CLO Achievement Chart
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div style="height:350px;">
+
+                <canvas id="courseCloChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         2. ASSESSMENT CLO ACHIEVEMENT
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                <i class="bi bi-clipboard-data me-2"></i>
+                2. Assessment CLO Achievement
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% for item in assessment_clos %}
+
+                <div class="mb-5">
+
+                    <h5 class="fw-bold border-bottom pb-2">
+
+                        {{ item.assessment.name
+                           if item.assessment.name is defined
+                           else item.assessment.assessment_name
+                           if item.assessment.assessment_name is defined
+                           else "Assessment " ~ loop.index }}
+
+                    </h5>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered align-middle">
+
+                            <thead class="table-light">
+
+                                <tr>
+
+                                    <th>CLO</th>
+
+                                    <th class="text-center">
+                                        Achievement
+                                    </th>
+
+                                    <th class="text-center">
+                                        Students
+                                    </th>
+
+                                    <th class="text-center">
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for clo_item in item.clo_results %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ clo_item.clo.clo_code }}
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        {% if clo_item.percentage is not none %}
+
+                                            <strong>
+                                                {{ "%.2f"|format(
+                                                    clo_item.percentage
+                                                ) }}%
+                                            </strong>
+
+                                        {% else %}
+
+                                            N/A
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        {{ clo_item.student_count }}
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        {% if clo_item.status == "PASS" %}
+
+                                            <span class="badge bg-success">
+                                                PASS
+                                            </span>
+
+                                        {% elif clo_item.status == "FAIL" %}
+
+                                            <span class="badge bg-danger">
+                                                FAIL
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                N/A
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+                    No assessment data available.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         3. STUDENT CLO ACHIEVEMENT
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                <i class="bi bi-people-fill me-2"></i>
+                3. Student CLO Achievement
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Student</th>
+
+                            {% for clo in clos %}
+
+                                <th class="text-center">
+                                    {{ clo.clo_code }}
+                                </th>
+
+                            {% endfor %}
+
+                            <th class="text-center">
+                                Overall
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in student_rows %}
+
+                        <tr>
+
+                            <td>
+                                {{ loop.index }}
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+
+                                    {% if row.student.name is defined %}
+
+                                        {{ row.student.name }}
+
+                                    {% elif row.student.student_name is defined %}
+
+                                        {{ row.student.student_name }}
+
+                                    {% else %}
+
+                                        Student {{ loop.index }}
+
+                                    {% endif %}
+
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {% if row.student.student_number is defined %}
+
+                                        {{ row.student.student_number }}
+
+                                    {% endif %}
+
+                                </small>
+
+                            </td>
+
+
+                            {% for clo_result in row.clos %}
+
+                            <td class="text-center">
+
+                                {% if clo_result.percentage is not none %}
+
+                                    {{ "%.2f"|format(
+                                        clo_result.percentage
+                                    ) }}%
+
+                                {% else %}
+
+                                    N/A
+
+                                {% endif %}
+
+                            </td>
+
+                            {% endfor %}
+
+
+                            <td class="text-center">
+
+                                {% if row.overall_percentage is not none %}
+
+                                    <strong>
+
+                                        {{ "%.2f"|format(
+                                            row.overall_percentage
+                                        ) }}%
+
+                                    </strong>
+
+                                    <br>
+
+                                    {% if row.overall_status == "PASS" %}
+
+                                        <span class="badge bg-success">
+                                            PASS
+                                        </span>
+
+                                    {% elif row.overall_status == "FAIL" %}
+
+                                        <span class="badge bg-danger">
+                                            FAIL
+                                        </span>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    N/A
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STUDENT STATISTICS
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+
+            <h4 class="mb-0">
+                <i class="bi bi-pie-chart-fill me-2"></i>
+                Student Performance Summary
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row text-center">
+
+                <div class="col-md-4">
+
+                    <h2>
+                        {{ student_count }}
+                    </h2>
+
+                    <p class="text-muted">
+                        Students with Results
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <h2>
+                        {{ passed_count }}
+                    </h2>
+
+                    <p class="text-success">
+                        Passed
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <h2>
+                        {{ failed_count }}
+                    </h2>
+
+                    <p class="text-danger">
+                        Failed
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div style="height:300px;">
+
+                <canvas id="studentStatusChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         REPORT FOOTER
+    ====================================================== -->
+
+    <div class="text-center text-muted mt-5">
+
+        <hr>
+
+        <small>
+            CLO Achievement Report -
+            {{ course.course_code }}
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CHART.JS
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        // =================================================
+        // COURSE CLO CHART
+        // =================================================
+
+        const courseCanvas =
+            document.getElementById(
+                "courseCloChart"
+            );
+
+
+        if (courseCanvas) {
+
+            new Chart(
+                courseCanvas,
+                {
+
+                    type: "bar",
+
+                    data: {
+
+                        labels: [
+
+                            {% for item in course_clos %}
+
+                                "{{ item.clo.clo_code }}"
+
+                                {% if not loop.last %},{% endif %}
+
+                            {% endfor %}
+
+                        ],
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "CLO Achievement (%)",
+
+                                data: [
+
+                                    {% for item in course_clos %}
+
+                                        {{ item.percentage
+                                           if item.percentage is not none
+                                           else 0 }}
+
+                                        {% if not loop.last %},{% endif %}
+
+                                    {% endfor %}
+
+                                ],
+
+                                borderWidth: 1
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                max: 100
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // =================================================
+        // STUDENT STATUS CHART
+        // =================================================
+
+        const studentCanvas =
+            document.getElementById(
+                "studentStatusChart"
+            );
+
+
+        if (studentCanvas) {
+
+            new Chart(
+                studentCanvas,
+                {
+
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: [
+                            "PASS",
+                            "FAIL"
+                        ],
+
+                        datasets: [
+
+                            {
+
+                                data: [
+                                    {{ passed_count }},
+                                    {{ failed_count }}
+                                ],
+
+                                borderWidth: 1
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+);
+
+</script>
+
+
+<!-- =====================================================
+     PRINT CSS
+====================================================== -->
+
+<style>
+
+@media print {
+
+    .no-print {
+        display: none !important;
+    }
+
+    nav,
+    footer,
+    .navbar {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    table {
+        font-size: 11px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h4 {
+        font-size: 18px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

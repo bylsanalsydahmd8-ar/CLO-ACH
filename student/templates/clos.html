@@ -1,0 +1,351 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    CLOs - CLOPLO
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="mb-4">
+
+        <h1>
+            Course Learning Outcomes
+        </h1>
+
+        <p class="text-muted">
+
+            Select a course to manage its CLOs.
+
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         COURSE SELECTION
+    ====================================================== -->
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="GET"
+                action="{{ url_for('clos') }}"
+            >
+
+                <div class="row align-items-end">
+
+                    <div class="col-md-9">
+
+                        <label
+                            class="form-label fw-bold"
+                        >
+                            Select Course
+                        </label>
+
+                        <select
+                            name="course_id"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                -- Select Course --
+                            </option>
+
+
+                            {% for course in courses %}
+
+                                <option
+                                    value="{{ course.id }}"
+                                    {% if selected_course
+                                       and selected_course.id == course.id %}
+                                        selected
+                                    {% endif %}
+                                >
+
+                                    {{ course.course_code }}
+                                    -
+                                    {{ course.course_name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-search"></i>
+
+                            View CLOs
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SELECTED COURSE
+    ====================================================== -->
+
+    {% if selected_course %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h3>
+
+                    {{ selected_course.course_code }}
+
+                </h3>
+
+                <p class="text-muted mb-0">
+
+                    {{ selected_course.course_name }}
+
+                </p>
+
+            </div>
+
+
+            {% if selected_clos|length < 6 %}
+
+                <a
+                    href="{{ url_for(
+                        'create_clo',
+                        course_id=selected_course.id
+                    ) }}"
+                    class="btn btn-primary"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Create CLO
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             CLOs
+        ================================================== -->
+
+        {% if selected_clos %}
+
+            <div class="row">
+
+                {% for clo in selected_clos %}
+
+                    <div class="col-md-6 col-xl-4 mb-4">
+
+                        <div class="card h-100 shadow-sm">
+
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <span class="badge bg-primary fs-6">
+
+                                        {{ clo.clo_code }}
+
+                                    </span>
+
+
+                                    {% if clo.category == "Knowledge & Understanding" %}
+
+                                        <span class="badge bg-info text-dark">
+                                            Knowledge
+                                        </span>
+
+                                    {% elif clo.category == "Professional Skills" %}
+
+                                        <span class="badge bg-success">
+                                            Professional Skills
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Competences
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <p class="mt-3">
+
+                                    {{ clo.description }}
+
+                                </p>
+
+
+                                <hr>
+
+
+                                <div class="small text-muted mb-3">
+
+                                    {{ clo.category }}
+
+                                </div>
+
+
+                                <div class="d-flex gap-2">
+
+                                    <a
+                                        href="{{ url_for(
+                                            'edit_clo',
+                                            course_id=selected_course.id,
+                                            clo_id=clo.id
+                                        ) }}"
+                                        class="btn btn-outline-primary flex-grow-1"
+                                    >
+
+                                        <i class="bi bi-pencil"></i>
+
+                                        Edit
+
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'delete_clo',
+                                            course_id=selected_course.id,
+                                            clo_id=clo.id
+                                        ) }}"
+                                        class="flex-grow-1"
+                                        onsubmit="return confirm(
+                                            'Delete this CLO?'
+                                        );"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-danger w-100"
+                                        >
+
+                                            <i class="bi bi-trash"></i>
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <i
+                    class="bi bi-bullseye"
+                    style="font-size: 60px;"
+                ></i>
+
+                <h3 class="mt-3">
+
+                    No CLOs Yet
+
+                </h3>
+
+                <p class="text-muted">
+
+                    This course does not have any CLOs.
+
+                </p>
+
+
+                <a
+                    href="{{ url_for(
+                        'create_clo',
+                        course_id=selected_course.id
+                    ) }}"
+                    class="btn btn-primary"
+                >
+
+                    <i class="bi bi-plus-lg"></i>
+
+                    Create First CLO
+
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <!-- =================================================
+             NO COURSE SELECTED
+        ================================================== -->
+
+        <div class="text-center py-5">
+
+            <i
+                class="bi bi-book"
+                style="font-size: 60px;"
+            ></i>
+
+            <h3 class="mt-3">
+
+                Select a Course
+
+            </h3>
+
+            <p class="text-muted">
+
+                Select a course above to view and manage
+                its CLOs.
+
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

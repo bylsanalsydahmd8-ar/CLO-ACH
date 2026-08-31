@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Import Students
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h1>
+            <i class="bi bi-file-earmark-excel me-2"></i>
+            Import Students
+        </h1>
+
+        <p class="text-muted mb-1">
+            Course:
+            <strong>
+                {{ course.course_code }}
+                -
+                {{ course.course_name }}
+            </strong>
+        </p>
+
+        <p class="text-muted">
+            Upload an Excel file containing the university ID
+            and student name.
+        </p>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-upload me-2"></i>
+                        Upload Excel File
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form
+                        method="POST"
+                        enctype="multipart/form-data"
+                        novalidate
+                    >
+
+                        {{ form.hidden_tag() }}
+
+
+                        <div class="mb-4">
+
+                            {{ form.file.label(
+                                class="form-label"
+                            ) }}
+
+                            {{ form.file(
+                                class="form-control"
+                            ) }}
+
+                            {% for error in form.file.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="alert alert-info">
+
+                            <i class="bi bi-info-circle me-2"></i>
+
+                            The Excel file should contain these columns:
+
+                            <strong>
+                                University ID
+                            </strong>
+
+                            and
+
+                            <strong>
+                                Student Name
+                            </strong>
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            {{ form.submit(
+                                class="btn btn-success"
+                            ) }}
+
+                            <a
+                                href="{{ url_for(
+                                    'course_students',
+                                    course_id=course.id
+                                ) }}"
+                                class="btn btn-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXCEL FORMAT -->
+
+        <div class="col-lg-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-table me-2"></i>
+                        Excel Format
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted">
+                        Your Excel file should look like this:
+                    </p>
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table table-bordered table-sm"
+                        >
+
+                            <thead class="table-dark">
+
+                                <tr>
+
+                                    <th>
+                                        University ID
+                                    </th>
+
+                                    <th>
+                                        Student Name
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td>
+                                        20230001
+                                    </td>
+
+                                    <td>
+                                        Ahmad Mohammad
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td>
+                                        20230002
+                                    </td>
+
+                                    <td>
+                                        Sara Ali
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td>
+                                        20230003
+                                    </td>
+
+                                    <td>
+                                        Khaled Ahmad
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="alert alert-warning mb-0">
+
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+
+                        Make sure the university ID is unique.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

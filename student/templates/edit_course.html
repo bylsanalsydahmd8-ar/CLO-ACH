@@ -1,0 +1,356 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Course
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>
+                <i class="bi bi-pencil-square me-2"></i>
+                Edit Course
+            </h1>
+
+            <p class="text-muted mb-0">
+                Update course information
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for(
+                'view_course',
+                course_id=course.id
+            ) }}"
+            class="btn btn-secondary"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Course
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         EDIT FORM
+    ====================================================== -->
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-book me-2"></i>
+                        Course Information
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'edit_course',
+                            course_id=course.id
+                        ) }}"
+                    >
+
+                        {{ form.hidden_tag() }}
+
+
+                        <!-- COURSE CODE -->
+
+                        <div class="mb-3">
+
+                            {{ form.course_code.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.course_code(
+                                class="form-control"
+                            ) }}
+
+                            {% if form.course_code.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {% for error in form.course_code.errors %}
+
+                                        <small>
+                                            {{ error }}
+                                        </small>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- COURSE NAME -->
+
+                        <div class="mb-3">
+
+                            {{ form.course_name.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.course_name(
+                                class="form-control"
+                            ) }}
+
+                            {% if form.course_name.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {% for error in form.course_name.errors %}
+
+                                        <small>
+                                            {{ error }}
+                                        </small>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="mb-3">
+
+                            {{ form.description.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.description(
+                                class="form-control",
+                                rows="5"
+                            ) }}
+
+                            {% if form.description.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {% for error in form.description.errors %}
+
+                                        <small>
+                                            {{ error }}
+                                        </small>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- ACADEMIC YEAR -->
+
+                        <div class="mb-3">
+
+                            {{ form.academic_year.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.academic_year(
+                                class="form-select"
+                            ) }}
+
+                            {% if form.academic_year.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {% for error in form.academic_year.errors %}
+
+                                        <small>
+                                            {{ error }}
+                                        </small>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- SEMESTER -->
+
+                        <div class="mb-4">
+
+                            {{ form.semester.label(
+                                class="form-label fw-bold"
+                            ) }}
+
+                            {{ form.semester(
+                                class="form-select"
+                            ) }}
+
+                            {% if form.semester.errors %}
+
+                                <div class="text-danger mt-1">
+
+                                    {% for error in form.semester.errors %}
+
+                                        <small>
+                                            {{ error }}
+                                        </small>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+
+                                <i class="bi bi-check-circle me-1"></i>
+
+                                Save Changes
+
+                            </button>
+
+
+                            <a
+                                href="{{ url_for(
+                                    'view_course',
+                                    course_id=course.id
+                                ) }}"
+                                class="btn btn-secondary"
+                            >
+
+                                <i class="bi bi-x-circle me-1"></i>
+
+                                Cancel
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             COURSE PREVIEW
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Current Course
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p class="mb-2">
+                        <strong>Course Code:</strong>
+                    </p>
+
+                    <p class="text-muted">
+                        {{ course.course_code }}
+                    </p>
+
+
+                    <p class="mb-2">
+                        <strong>Course Name:</strong>
+                    </p>
+
+                    <p class="text-muted">
+                        {{ course.course_name }}
+                    </p>
+
+
+                    <p class="mb-2">
+                        <strong>Academic Year:</strong>
+                    </p>
+
+                    <p class="text-muted">
+
+                        {% if course.academic_term %}
+
+                            {{ course.academic_term.academic_year }}
+
+                        {% else %}
+
+                            Not specified
+
+                        {% endif %}
+
+                    </p>
+
+
+                    <p class="mb-2">
+                        <strong>Semester:</strong>
+                    </p>
+
+                    <p class="text-muted">
+
+                        {% if course.academic_term %}
+
+                            {{ course.academic_term.semester }}
+
+                        {% else %}
+
+                            Not specified
+
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
